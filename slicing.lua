@@ -1,3 +1,4 @@
+-- if you want to save video to inputdir , change "get_homedir()" to "get_inputdir(inpath)" in function cut(shift, endpos) 
 local msg = require "mp.msg"
 local utils = require "mp.utils"
 local options = require "mp.options"
@@ -78,11 +79,17 @@ function get_outname(shift, endpos)
     local name = mp.get_property("filename")
     local dotidx = name:reverse():find(".", 1, true)
     if dotidx then name = name:sub(1, -dotidx-1) end
+    name = name .. string.format(".%s_%s", timestamp(shift), timestamp(endpos))
     name = name:gsub(" ", "_")
     name = name:gsub(":", "-")
-    name = name .. string.format(".%s-%s", timestamp(shift), timestamp(endpos))
     return name
 end
+
+function get_inputdir(inpath)
+    local filename = inpath:reverse():find("\\",1,true)
+    if filename then inpath =inpath:sub(1,-filename-1) end
+    return inpath
+end 
 
 function cut(shift, endpos)
     local cmd = trim(o.command_template:gsub("%s+", " "))
